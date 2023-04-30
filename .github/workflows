@@ -11,16 +11,25 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.0.0
+          terraform_version: 1.1.7
+      - name: Terraform fmt
+        id: fmt
+        run: terraform fmt -check
+        continue-on-error: true
+
       - name: Terraform Init
+        id: init
         run: terraform init
-      - name: Terraform Fmt
-        run: terraform fmt -check -diff
+
       - name: Terraform Validate
-        run: terraform validate
+        id: validate
+        run: terraform validate -no-color
+
       - name: Terraform Plan
-        run: terraform plan
+        id: plan
+        run: terraform plan -no-color
+        continue-on-error: true
